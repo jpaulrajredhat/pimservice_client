@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.citi.pimservice</groupId>
+  <artifactId>pimservice_client</artifactId>
+  <version>1.0</version>
+  
+  <properties>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <httpcore.version>4.4.15</httpcore.version>
+    <commons-logging.version>1.2</commons-logging.version>
+    <commons-codec.version>1.11</commons-codec.version>
+    <ehcache.version>2.6.11</ehcache.version>
+    <memcached.version>2.12.3</memcached.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <junit.version>4.11</junit.version>
+    <easymock.version>2.5.2</easymock.version>
+    <mockito.version>1.10.19</mockito.version>
+    <jna.version>4.5.2</jna.version>
+    <hc.stylecheck.version>1</hc.stylecheck.version>
+    <api.comparison.version>4.5</api.comparison.version>
+  </properties>
+  
+  <dependencies>
+  
+  	<dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	    <version>4.5.6</version>
+	</dependency>
+	
+	 <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcore.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons-codec.version}</version>
+      </dependency>
+	
+  </dependencies>
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <configuration>
+                <mainClass>com.pimservice.ClientAuthentication</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+</project>
