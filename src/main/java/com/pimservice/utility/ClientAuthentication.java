@@ -12,6 +12,8 @@ import org.apache.http.util.EntityUtils;
 
 public class ClientAuthentication {
 
+	
+	//this code need to changed for PIM service 
     public static void main(String[] args) throws Exception {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(

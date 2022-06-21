@@ -19,7 +19,7 @@ public class ClientCertificateAuthendication {
 
     public static void main(String[] args) throws Exception {
        
-    	
+    	// this code will implemented for certiicate based authendication
     	HttpGet request = new HttpGet("http://localhost:8080/kie-server/services/rest/server/containers");
 
         CredentialsProvider provider = new BasicCredentialsProvider();
