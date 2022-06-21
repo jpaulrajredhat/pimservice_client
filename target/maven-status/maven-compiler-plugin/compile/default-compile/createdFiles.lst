@@ -1,2 +1,3 @@
-pimservice_client/PimServiceRestClient.class
+pimservice_client/PimServiceClient.class
 com/pimservice/ClientAuthentication.class
+com/pimservice/ClientBasicAuthentication.class

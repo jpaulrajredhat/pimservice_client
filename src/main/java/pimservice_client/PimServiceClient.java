@@ -1,8 +1,8 @@
 package pimservice_client;
 
-public class PimServiceRestClient {
+public class PimServiceClient {
 
-	public PimServiceRestClient() {
+	public PimServiceClient() {
 		// TODO Auto-generated constructor stub
 	}
 	
