@@ -1,6 +1,11 @@
 package com.pimservice;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +33,44 @@ public class CreatePlanService {
 	
 	public List<Long>  getProcessInstancestoMigrate(String source , String target , String processId) throws  IOException {
 		
-		List<Long> instances =  new ArrayList<>();
+		String auth = System.getProperty("AUTH", "basic");
+		
+		List<Long> instances =  new ArrayList<Long>();
 		
 		HttpClient httpClient = new HttpClient(); 
+		CloseableHttpClient client  = null;
 		
-		CloseableHttpClient client = httpClient.getHttpClientWithBasicAuth();
+		if ("basic".equals(auth)) {
+			
+			 client = httpClient.getHttpClientWithBasicAuth();
+
+		}else {
+				try {
+					client = httpClient.getHttpClientWithCertAuth();
+				} catch (KeyManagementException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnrecoverableKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (KeyStoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CertificateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			
+		}
+		
+		
 		
 		String url = System.getProperty("KIE_SERVER_URL", "http://localhost:8080");
     	
@@ -107,9 +145,13 @@ public class CreatePlanService {
         	
         }
         }finally {
-			response.close();
+        	if (response != null) {
+        		response.close();
+        	}
+        	if (client != null) {
 			client.close();
-		}
+        	}
+        }
 		return instances;
 		
 		

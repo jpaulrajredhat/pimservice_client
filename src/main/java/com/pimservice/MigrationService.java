@@ -1,6 +1,11 @@
 package com.pimservice;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -22,6 +27,7 @@ public class MigrationService {
 	
 	public void migrate(Plan plan) throws ClientProtocolException, IOException {
 		
+		String auth = System.getProperty("AUTH", "basic");
 		
 		String source =  plan.getSourceContainer();
 		String target = plan.getTargetContainer();
@@ -31,10 +37,40 @@ public class MigrationService {
 		
 		List<Long> processInstances = planService.getProcessInstancestoMigrate(source, target, processId);
 		
-		
 		HttpClient httpClient = new HttpClient(); 
+		 CloseableHttpClient client = null;
 		
-		CloseableHttpClient client = httpClient.getHttpClientWithBasicAuth();
+		if ("basic".equals(auth)) {
+			
+			 client = httpClient.getHttpClientWithBasicAuth();
+		}else {
+			 
+				try {
+					client = httpClient.getHttpClientWithCertAuth();
+				} catch (KeyManagementException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnrecoverableKeyException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (KeyStoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NoSuchAlgorithmException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CertificateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+		
+		
+		
 		
 		try {
 			
