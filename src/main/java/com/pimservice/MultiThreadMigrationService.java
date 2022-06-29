@@ -1,6 +1,7 @@
 package com.pimservice;
 
 import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+
+import com.httpclient.HttpClient;
 
 public class MultiThreadMigrationService {
 
@@ -68,7 +71,8 @@ public class MultiThreadMigrationService {
 	public void migrate(Plan plan) throws ClientProtocolException, IOException {
 		
 
-		
+		String auth = System.getProperty("AUTH", "basic");
+
 		String source =  plan.getSourceContainer();
 		String target = plan.getTargetContainer();
 		String processId = plan.getProcessId();
@@ -86,24 +90,54 @@ public class MultiThreadMigrationService {
         cm.setMaxTotal(100);
 
         
-        try {
-        	
+        HttpClient httpClient = new HttpClient(); 
+		 CloseableHttpClient client = null;
+		
+        
+        if ("basic".equals(auth)) {
+			
+			 //client = httpClient.getHttpClientWithBasicAuth();
         	 CredentialsProvider provider = new BasicCredentialsProvider();
              provider.setCredentials(
                      AuthScope.ANY,
                      new UsernamePasswordCredentials("rhpamAdmin", "jboss123$")
              );
-             
-        	CloseableHttpClient httpclient = HttpClients.custom()
-                    .setConnectionManager(cm)
-                    .setDefaultCredentialsProvider(provider)
-                    .build() ;
+             client = HttpClients.custom()
+                     .setConnectionManager(cm)
+                     .setDefaultCredentialsProvider(provider)
+                     .build() ;
+		}else {
+			 
+				try {
+					client = httpClient.getHttpCertClientAuth();
+				} catch (CertificateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+        
+        try {
+        	
+//        	 CredentialsProvider provider = new BasicCredentialsProvider();
+//             provider.setCredentials(
+//                     AuthScope.ANY,
+//                     new UsernamePasswordCredentials("rhpamAdmin", "jboss123$")
+//             );
+//             
+//        	CloseableHttpClient httpclient = HttpClients.custom()
+//                    .setConnectionManager(cm)
+//                    .setDefaultCredentialsProvider(provider)
+//                    .build() ;
                     
         	final GetThread[] threads = new GetThread[10];
             for (int i = 0; i < threads.length; i++) {
                 final HttpPut httpput = new HttpPut(migurls.get(i));
                 httpput.setHeader("Content-Type", "application/json");
-                threads[i] = new GetThread(httpclient, httpput, i + 1);
+                threads[i] = new GetThread(client, httpput, i + 1);
             }
 
             // start the threads

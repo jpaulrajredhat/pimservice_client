@@ -46,19 +46,7 @@ public class MigrationService {
 		}else {
 			 
 				try {
-					client = httpClient.getHttpClientWithCertAuth();
-				} catch (KeyManagementException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnrecoverableKeyException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (KeyStoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NoSuchAlgorithmException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					client = httpClient.getHttpCertClientAuth();
 				} catch (CertificateException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
