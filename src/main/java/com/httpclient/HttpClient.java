@@ -57,21 +57,11 @@ public CloseableHttpClient getHttpCertClientAuth() throws IOException, Certifica
 					createSslContext(),
 					//new String[]{"TLSv1"}, // Allow TLSv1 protocol only
 			        //null,
-			        //SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+			        SSLConnectionSocketFactory.getDefaultHostnameVerifier()
 					
-					NoopHostnameVerifier.INSTANCE);
+					//NoopHostnameVerifier.INSTANCE
+					);
 			
-//			Registry<ConnectionSocketFactory> socketFactoryRegistry = 
-//				      RegistryBuilder.<ConnectionSocketFactory> create()
-//				      .register("https", csf)
-//				      .register("http", new PlainConnectionSocketFactory())
-//				      .build();
-			
-//		    BasicHttpClientConnectionManager connectionManager = 
-//		    	      new BasicHttpClientConnectionManager(socketFactoryRegistry);
-//		    
-//		    	     httpClient = HttpClients.custom().setSSLSocketFactory(csf)
-//		    	      .setConnectionManager(connectionManager).build();
 
 		} catch (KeyManagementException e) {
 			// TODO Auto-generated catch block
