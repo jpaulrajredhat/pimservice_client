@@ -51,13 +51,14 @@ Here are some example plan configuration.
 	"execution" :"M",
 	"sourceContainer":"pimdemoprocess_1.0.0",
 	"targetContainer":"pimdemoprocess_1.0.1",
-	"processId":"pimdemoprocess.rhpimprocess"
+	"processId":"pimdemoprocess.rhpimprocess",
+	"processInstances":[1,2,3,4,5,6]
 	}
 	
 ]
 
 ## Running
-## prerequisite, you much have both MAVEN and JDK installed on your machine .
+## prerequisite, you much have both MAVEN and JDK/JRE installed on your machine.
 
 To get the application running with SSL  certification based authentication :
 
