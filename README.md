@@ -59,14 +59,15 @@ Here are some example plan configuration.
 ## Running
 ## prerequisite, you much have both MAVEN and JDK installed on your machine .
 
-To get the application with cecrt authendication :
-Navigate to project folder and run the following mvn commnads. 
+To get the application running with SSL  certification based authentication :
+
+Navigate to project folder and run the following mvn commands. 
 ```
-$ mvn clean compile assembly:single # Build and assenble all dependency as a one bundle .
-$ java -D<pathtokyestore fielname> -D<pathtokyestore password> -jar target/pimservice_client-1.0-jar-with-dependencies.jar
+$ mvn clean compile assembly:single # Build and assemble all dependency as a one bundle .
+$ java -D<pathtokyestore filename> -D<pathtokyestore password> -jar target/pimservice_client-1.0-jar-with-dependencies.jar
 ```
 
-To get the application with basic authendication (loacal testing) :
+To get the application with basic authentication (local testing) :
 ```
-$ mvn clean compile assembly:single # Build and assenble all dependency as a one bundle .
+$ mvn clean compile assembly:single # Build and assemble all dependency as a one bundle .
 $ java -DAUTH="basic" -jar target/pimservice_client-1.0-jar-with-dependencies.jar 
