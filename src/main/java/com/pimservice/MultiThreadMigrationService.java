@@ -40,6 +40,11 @@ public class MultiThreadMigrationService {
 		//
 		String url = System.getProperty("KIE_SERVER_URL", "http://localhost:8080");
 		
+		System.out.println("total number of instances " + noOfInstances);
+		
+		System.out.println("number of instances per batch " + noOfInsperBacth);
+
+		
 		String queryParam = "?";
   
 		int count =1;
@@ -63,7 +68,9 @@ public class MultiThreadMigrationService {
         	}
         	                	
 		}
-		
+
+		System.out.println("number of batches " + migurls.size() );
+
 		return migurls;
 
 		//
@@ -81,10 +88,6 @@ public class MultiThreadMigrationService {
 		
 		List<Long> processInstances = planService.getProcessInstancestoMigrate(source, target, processId);
 		
-		//int noOfInstances = processInstances.size();
-		
-		//int noOfInsperBacth = noOfInstances > 200 ? noOfInstances / 10 : noOfInstances;
-		
 		List<String>  migurls = buildBatch(processInstances, source, target, processId);
         final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(100);
@@ -96,11 +99,12 @@ public class MultiThreadMigrationService {
         
         if ("basic".equals(auth)) {
 			
-			 //client = httpClient.getHttpClientWithBasicAuth();
+        	String userId = System.getProperty("BASIC_USERID", "rhpamAdmin");
+			String password = System.getProperty("BASIC_PASSWORD", "jboss123");
         	 CredentialsProvider provider = new BasicCredentialsProvider();
              provider.setCredentials(
                      AuthScope.ANY,
-                     new UsernamePasswordCredentials("rhpamAdmin", "jboss123$")
+                     new UsernamePasswordCredentials(userId, password)
              );
              client = HttpClients.custom()
                      .setConnectionManager(cm)
@@ -109,7 +113,8 @@ public class MultiThreadMigrationService {
 		}else {
 			 
 				try {
-					client = httpClient.getHttpCertClientAuth();
+					client = httpClient.getHttpCertClientAuth(cm);
+					
 				} catch (CertificateException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -122,18 +127,8 @@ public class MultiThreadMigrationService {
         
         try {
         	
-//        	 CredentialsProvider provider = new BasicCredentialsProvider();
-//             provider.setCredentials(
-//                     AuthScope.ANY,
-//                     new UsernamePasswordCredentials("rhpamAdmin", "jboss123$")
-//             );
-//             
-//        	CloseableHttpClient httpclient = HttpClients.custom()
-//                    .setConnectionManager(cm)
-//                    .setDefaultCredentialsProvider(provider)
-//                    .build() ;
                     
-        	final GetThread[] threads = new GetThread[10];
+        	final GetThread[] threads = new GetThread[migurls.size()];
             for (int i = 0; i < threads.length; i++) {
                 final HttpPut httpput = new HttpPut(migurls.get(i));
                 httpput.setHeader("Content-Type", "application/json");
@@ -186,7 +181,8 @@ public class MultiThreadMigrationService {
             try {
                 //System.out.println(id + " - about to get something from " + httpget.getUri());
                 try {
-                		CloseableHttpResponse response = httpClient.execute(httpput, context);
+                	
+                	CloseableHttpResponse response = httpClient.execute(httpput, context);
                     System.out.println(id + " - get executed");
                     
 
@@ -197,7 +193,6 @@ public class MultiThreadMigrationService {
                     	String result = EntityUtils.toString(entity);
      		           
     		        	System.out.println(id + " - " + result);
-                        //System.out.println(id + " - " + bytes.length + " bytes read");
                     }
                 }finally {
 					
