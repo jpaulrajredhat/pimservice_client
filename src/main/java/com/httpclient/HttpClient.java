@@ -20,6 +20,7 @@ import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 public class HttpClient {
 
@@ -31,10 +32,13 @@ public class HttpClient {
        
 			CredentialsProvider credsProvider = new BasicCredentialsProvider();
 
-		
+			String userId = System.getProperty("BASIC_USERID", "rhpamAdmin");
+			String password = System.getProperty("BASIC_PASSWORD", "jboss123$");
+
+			
 			credsProvider.setCredentials(
 					new AuthScope("localhost", 8080),
-					new UsernamePasswordCredentials("rhpamAdmin", "jboss123$"));
+					new UsernamePasswordCredentials(userId, password));
 			CloseableHttpClient httpclient = HttpClients.custom()
 					.setDefaultCredentialsProvider(credsProvider)
 					.build();
@@ -93,6 +97,55 @@ public CloseableHttpClient getHttpCertClientAuth() throws IOException, Certifica
 	return  httpClient;
 
 }
+public CloseableHttpClient getHttpCertClientAuth(PoolingHttpClientConnectionManager cm) throws IOException, CertificateException{
+	
+	
+	 CloseableHttpClient httpClient = null;;
+	
+	
+		
+		SSLConnectionSocketFactory csf = null;
+		try {
+			csf = new SSLConnectionSocketFactory(
+					createSslContext(),
+					//new String[]{"TLSv1"}, // Allow TLSv1 protocol only
+			        //null,
+			        SSLConnectionSocketFactory.getDefaultHostnameVerifier()
+					
+					//NoopHostnameVerifier.INSTANCE
+					);
+			
+
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnrecoverableKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		httpClient = HttpClients.custom().setConnectionManager(cm).setSSLSocketFactory(csf).build();
+		 
+		
+	 
+	
+	
+	 
+	return  httpClient;
+
+}
 
 public  SSLContext createSslContext() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
     
@@ -108,11 +161,6 @@ public  SSLContext createSslContext() throws KeyStoreException, IOException, NoS
 	
     KeyStore tks = KeyStore.getInstance(CA_KEYSTORE_TYPE);
     tks.load(new FileInputStream(CA_KEYSTORE_PATH), CA_KEYSTORE_PASS.toCharArray());
-
-//    // Client keystore
-//    KeyStore cks = KeyStore.getInstance(CLIENT_KEYSTORE_TYPE);
-//    cks.load(new FileInputStream(CLIENT_KEYSTORE_PATH), CLIENT_KEYSTORE_PASS.toCharArray());
-
     SSLContext sslcontext = SSLContexts.custom()
             .loadTrustMaterial(tks, new TrustSelfSignedStrategy()) // use it to customize
             .loadKeyMaterial(tks, CA_KEYSTORE_PASS.toCharArray()) // load client certificate

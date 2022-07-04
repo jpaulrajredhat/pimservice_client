@@ -1,15 +1,21 @@
 package com.pimservice;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Plan {
 
+	private String id ;
+	private String type;
 	private String sourceContainer;
 	private String targetContainer;
 	private String processId;
-	private List<Long> processInstancesId ;
+	private List<String> processIds;
+	private Long processInstance ;
+	private List<Long> processInstanceTobeMigrated ;
+	private List<Long> processInstances ;
 	
-	
+	private String execution ;
 	
 	
 	public Plan(String sourceContainer, String targetContainer, String processId) {
@@ -20,6 +26,34 @@ public class Plan {
 	}
 
 
+	
+	public String getExecution() {
+		return execution;
+	}
+
+
+
+	public void setExecution(String execution) {
+		this.execution = execution;
+	}
+
+
+
+	public List<Long> getProcessInstanceTobeMigrated() {
+		return processInstanceTobeMigrated;
+	}
+
+
+
+	public void setProcessInstanceTobeMigrated(List<Long> processInstanceTobeMigrated) {
+		this.processInstanceTobeMigrated = processInstanceTobeMigrated;
+	}
+
+
+
+	
+	
+	
 
 	public String getSourceContainer() {
 		return sourceContainer;
@@ -57,21 +91,91 @@ public class Plan {
 
 
 
-	public List<Long> getProcessInstancesId() {
-		return processInstancesId;
+	
+
+	public List<Long> getProcessInstances() {
+		return processInstances;
 	}
 
 
 
-	public void setProcessInstancesId(List<Long> processInstancesId) {
-		this.processInstancesId = processInstancesId;
+	public void setProcessInstances(List<Long> processInstances) {
+		this.processInstances = processInstances;
 	}
+
+
 
 	public void createPlan() {
 		
 		
 		
 	}
+
+
+	public String getId() {
+		return id;
+	}
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+
+	
+
+
+
+	public String getType() {
+		return type;
+	}
+
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+
+	public List<String> getProcessIds() {
+		return processIds;
+	}
+
+
+
+	public void setProcessIds(List<String> processIds) {
+		this.processIds = processIds;
+	}
+
+
+
+	public Long getProcessInstance() {
+		return processInstance;
+	}
+
+
+
+	public void setProcessInstance(Long processInstance) {
+		this.processInstance = processInstance;
+	}
+
+
+
+	
+
+
+
+	@Override
+	public String toString() {
+		return "Plan [id=" + id + ", type=" + type + ", sourceContainer=" + sourceContainer + ", targetContainer="
+				+ targetContainer + ", processId=" + processId + ", processIds=" + processIds + ", processInstance="
+				+ processInstance + ", processInstanceTobeMigrated=" + processInstanceTobeMigrated
+				+ ", processInstances=" + processInstances + "]";
+	}
+
 
 
 	public Plan() {

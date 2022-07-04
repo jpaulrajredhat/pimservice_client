@@ -1,10 +1,10 @@
 package com.pimservice;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.httpclient.HttpClient;
 
 public class CreatePlanService {
@@ -30,6 +31,28 @@ public class CreatePlanService {
 	public CreatePlanService() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public  List<Plan>  createPlan() throws ClientProtocolException, IOException {
+		
+		Gson gson = new Gson();
+		ClassLoader classLoader = gson.getClass().getClassLoader();
+		
+        InputStream inputStream = classLoader.getResourceAsStream("plan.json");
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+
+        
+        List<Plan> plans = gson.fromJson(reader, new TypeToken<List<Plan>>() {}.getType());
+        
+        processMigrationPlan(plans);
+        
+        System.out.println(plans);
+        
+        return plans;
+        
+	
+	}		
+		
 	
 	public List<Long>  getProcessInstancestoMigrate(String source , String target , String processId) throws  IOException {
 		
@@ -100,7 +123,7 @@ public class CreatePlanService {
                 		
                 		for (int i = 0; i < array.size(); i++) {
                         	
-                			System.out.println("List Elements 22 " + array.get(i).getAsJsonObject().get("process-instance-id"));
+                			//System.out.println("List Elements 22 " + array.get(i).getAsJsonObject().get("process-instance-id"));
                         	
                         	Long pid = array.get(i).getAsJsonObject().get("process-instance-id").getAsLong();     
                         	instances.add(pid);
@@ -151,7 +174,52 @@ public class CreatePlanService {
 		 
 		
 	}
+	
+	public void processMigrationPlan(List<Plan> plans) throws ClientProtocolException, IOException {
+		
+		for ( Plan  plan : plans  ) {
+			
+			
+			getProcessInstancestoMigrate(plan);			
+			
+		}
+	}
 
+	public List<Long>  getProcessInstancestoMigrate(Plan plan) throws  IOException {
+		
+		String processId = plan.getProcessId();
+		List<Long> processInstances = plan.getProcessInstances();
+		String source = plan.getSourceContainer();
+		String target = plan.getTargetContainer();
+		List<String >processIds = plan.getProcessIds();
+		
+		List<Long> instances =  new ArrayList<Long>();
+		
+
+		
+		if (  processInstances == null || (processInstances != null && processInstances.size() == 0 )) {
+			
+			instances = getProcessInstancestoMigrate(source, target, processId);
+			
+			
+		} else if( processInstances != null && processInstances.size() > 0 ) {
+			
+			instances.addAll(processInstances);
+			
+		}else if( processIds != null && processIds.size() > 0 ) {
+			
+			
+			for( String pId : processIds ) {
+				
+				instances.addAll(getProcessInstancestoMigrate(source, target, processId));
+
+			}
+			
+		}
+		plan.setProcessInstanceTobeMigrated(instances);
+
+		return instances;
+	}
 	public void CreatePlan(String source , String target , String processId) throws ClientProtocolException, IOException {
 		
 		
@@ -197,7 +265,7 @@ public class CreatePlanService {
         		
         		for (int i = 0; i < array.size(); i++) {
                 	
-        			System.out.println("List Elements 22 " + array.get(i).getAsJsonObject().get("process-instance-id"));
+        			//System.out.println("List Elements 22 " + array.get(i).getAsJsonObject().get("process-instance-id"));
                 	
                 	String str = array.get(i).getAsJsonObject().get("process-instance-id").getAsString();                	
                 	queryParam += "processInstanceId="+ str + "&" ;
@@ -245,7 +313,10 @@ public class CreatePlanService {
     	CreatePlanService service = new CreatePlanService();
     	
     	//service.CreatePlan("pimdemoprocess_1.0.0", "pimdemoprocess_1.0.1", "pimdemoprocess.rhpimprocess");
-    	service.getProcessInstancestoMigrate("pimdemoprocess_1.0.0", "pimdemoprocess_1.0.1", "pimdemoprocess.rhpimprocess");
+    	//service.getProcessInstancestoMigrate("pimdemoprocess_1.0.0", "pimdemoprocess_1.0.1", "pimdemoprocess.rhpimprocess");
+    	
+    	service.createPlan();
+    	
     
     }
 	

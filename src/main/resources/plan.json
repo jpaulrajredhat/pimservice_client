@@ -1,0 +1,12 @@
+
+ [
+	
+	{
+	"planId" : "101",
+	"execution" :"M",
+	"sourceContainer":"pimdemoprocess_1.0.0",
+	"targetContainer":"pimdemoprocess_1.0.1",
+	"processId":"pimdemoprocess.rhpimprocess"
+	}
+	
+]

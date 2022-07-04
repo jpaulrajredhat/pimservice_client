@@ -84,7 +84,7 @@
 	    	<configuration>
 	       	 	<archive>
 	        		<manifest>
-	            		<mainClass>pimservice_client.PimServiceClient</mainClass>
+	            		<mainClass>pimservice_client.PimKieMigrationService</mainClass>
 	        		</manifest>
 	        	</archive>
 	        	<descriptorRefs>

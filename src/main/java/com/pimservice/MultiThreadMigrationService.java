@@ -21,6 +21,9 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.httpclient.HttpClient;
 
 public class MultiThreadMigrationService {
@@ -78,7 +81,7 @@ public class MultiThreadMigrationService {
 	public void migrate(Plan plan) throws ClientProtocolException, IOException {
 		
 
-		String auth = System.getProperty("AUTH", "basic");
+		String auth = System.getProperty("AUTH", "cert");
 
 		String source =  plan.getSourceContainer();
 		String target = plan.getTargetContainer();
@@ -89,6 +92,7 @@ public class MultiThreadMigrationService {
 		List<Long> processInstances = planService.getProcessInstancestoMigrate(source, target, processId);
 		
 		List<String>  migurls = buildBatch(processInstances, source, target, processId);
+		
         final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(100);
 
@@ -132,7 +136,92 @@ public class MultiThreadMigrationService {
             for (int i = 0; i < threads.length; i++) {
                 final HttpPut httpput = new HttpPut(migurls.get(i));
                 httpput.setHeader("Content-Type", "application/json");
-                threads[i] = new GetThread(client, httpput, i + 1);
+                threads[i] = new GetThread(client, httpput, null, i + 1);
+            }
+
+            // start the threads
+            for (final GetThread thread : threads) {
+                thread.start();
+            }
+
+            // join the threads
+            for (final GetThread thread : threads) {
+                try {
+					thread.join();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }	
+               
+        	
+        }finally {
+        	
+        	
+        }
+		
+		
+	}
+	
+public void migrate(Migration migration) throws ClientProtocolException, IOException {
+		
+
+	
+		String auth = System.getProperty("AUTH", "cert");
+		Plan plan = migration.getPlan();
+		String source =  plan.getSourceContainer();
+		String target = plan.getTargetContainer();
+		String processId = plan.getProcessId();
+		
+		List<Long> processInstances = plan.getProcessInstanceTobeMigrated();
+
+		
+		List<String>  migurls = buildBatch(processInstances, source, target, processId);
+		
+        final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(100);
+
+        
+        HttpClient httpClient = new HttpClient(); 
+		 CloseableHttpClient client = null;
+		
+        
+        if ("basic".equals(auth)) {
+			
+        	String userId = System.getProperty("BASIC_USERID", "rhpamAdmin");
+			String password = System.getProperty("BASIC_PASSWORD", "jboss123$");
+        	 CredentialsProvider provider = new BasicCredentialsProvider();
+             provider.setCredentials(
+                     AuthScope.ANY,
+                     new UsernamePasswordCredentials(userId, password)
+             );
+             client = HttpClients.custom()
+                     .setConnectionManager(cm)
+                     .setDefaultCredentialsProvider(provider)
+                     .build() ;
+		}else {
+			 
+				try {
+					client = httpClient.getHttpCertClientAuth(cm);
+					
+				} catch (CertificateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+        
+        try {
+        	
+                    
+        	final GetThread[] threads = new GetThread[migurls.size()];
+            for (int i = 0; i < threads.length; i++) {
+                final HttpPut httpput = new HttpPut(migurls.get(i));
+                httpput.setHeader("Content-Type", "application/json");
+                threads[i] = new GetThread(client, httpput, migration ,i + 1);
             }
 
             // start the threads
@@ -165,12 +254,13 @@ public class MultiThreadMigrationService {
         private final HttpContext context;
         private final HttpPut httpput;
         private final int id;
-
-        public GetThread(final CloseableHttpClient httpClient, final HttpPut httpput, final int id) {
+        private Migration migration;
+        public GetThread(final CloseableHttpClient httpClient, final HttpPut httpput, Migration migration ,final int id) {
             this.httpClient = httpClient;
             this.context = new BasicHttpContext();
             this.httpput = httpput;
             this.id = id;
+            this.migration = migration;
         }
 
         /**
@@ -185,14 +275,34 @@ public class MultiThreadMigrationService {
                 	CloseableHttpResponse response = httpClient.execute(httpput, context);
                     System.out.println(id + " - get executed");
                     
-
                     // get the response body as an array of bytes
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                       // final byte[] bytes = EntityUtils.toByteArray(entity);
+                       //final byte[] bytes = EntityUtils.toByteArray(entity);
                     	String result = EntityUtils.toString(entity);
-     		           
     		        	System.out.println(id + " - " + result);
+    		        	
+    		        	JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+
+                   		
+                		JsonArray array =  jsonObject.get("migration-report-instance").getAsJsonArray();
+                		
+                		System.out.println(result);
+                		
+                		System.out.println(array);
+                		if (migration != null ) {
+	                		String migLog = migration.getMigrationLog();
+	                		
+	                		if ( migLog !=null) {
+	                			migLog.concat(array.toString());
+	                		}else {
+	                			migLog = new String(array.toString());
+	             
+	                			migration.setMigrationLog(migLog);
+	                		}
+	                		migration.addMigrationResults(array);
+                		}
+    		        	
                     }
                 }finally {
 					
