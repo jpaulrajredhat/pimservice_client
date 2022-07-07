@@ -56,7 +56,7 @@ public class CreatePlanService {
 	
 	public List<Long>  getProcessInstancestoMigrate(String source , String target , String processId) throws  IOException {
 		
-		String auth = System.getProperty("AUTH", "basic");
+		String auth = System.getProperty("AUTH", "cert");
 		
 		List<Long> instances =  new ArrayList<Long>();
 		

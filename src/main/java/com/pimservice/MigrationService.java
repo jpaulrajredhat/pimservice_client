@@ -166,7 +166,7 @@ public void migrate(Migration migration) throws ClientProtocolException, IOExcep
 			
 			String migUrl = url + "/kie-server/services/rest/server/admin/containers/"+ source + "/processes/instances" + queryParam;
 			
-			System.out.println("query param " + migUrl);
+			//System.out.println("query param " + migUrl);
 	
 			HttpPut httpPut = new HttpPut(migUrl );
 			
@@ -179,28 +179,38 @@ public void migrate(Migration migration) throws ClientProtocolException, IOExcep
 		
 		        HttpEntity entity = response.getEntity();
 		        
+		       
 		        if (entity != null) {
+		        	 
 		        	String result = EntityUtils.toString(entity);
 		        	
-		        	JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+		        	
+		        	try {
+		        		
+		        		JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
 
                		
-            		JsonArray array =  jsonObject.get("migration-report-instance").getAsJsonArray();
-            		
-            		//array.getAsJsonObject().get
-            		
-            		System.out.println(result);
-            		
-            		System.out.println(array);
+		        		JsonArray array =  jsonObject.get("migration-report-instance").getAsJsonArray();
 		        	
-		        	migration.setMigrationLog(array.toString());
+		        		//migration.setMigrationLog(array.toString());
 		        	
-		        	migration.setMigrationResult(array);
+		        		migration.setMigrationResult(array);
+		        
+		        	}catch (Exception e) {
+		        		if ( result != null ) {
+		        			String planId = plan.getPlanId();
+		        			migration.addMigraationfailLog("Error while processing plan Id - " + planId + "--> " + result);
+		        			//migration.getInstancesFailed()
+		        	
+		        		}
+		        	}
 		           
 		        	//System.out.println(migration.getMigraationSuccessLog());
 		        }
 		        
-	        }finally {
+	        }
+	        	
+	        finally {
 				response.close();
 			}
 

@@ -11,7 +11,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -282,26 +281,35 @@ public void migrate(Migration migration) throws ClientProtocolException, IOExcep
                     	String result = EntityUtils.toString(entity);
     		        	System.out.println(id + " - " + result);
     		        	
-    		        	JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
-
-                   		
-                		JsonArray array =  jsonObject.get("migration-report-instance").getAsJsonArray();
-                		
-                		System.out.println(result);
-                		
-                		System.out.println(array);
-                		if (migration != null ) {
-	                		String migLog = migration.getMigrationLog();
+    		        	try {
+	    		        	JsonObject jsonObject = JsonParser.parseString(result).getAsJsonObject();
+	
+	                   		
+	                		JsonArray array =  jsonObject.get("migration-report-instance").getAsJsonArray();
 	                		
-	                		if ( migLog !=null) {
-	                			migLog.concat(array.toString());
-	                		}else {
-	                			migLog = new String(array.toString());
-	             
-	                			migration.setMigrationLog(migLog);
+	                		
+	                		
+	                		if (migration != null ) {
+		                		String migLog = migration.getMigrationLog();
+		                		
+		                		if ( migLog !=null) {
+		                			migLog.concat(array.toString());
+		                		}else {
+		                			migLog = new String(array.toString());
+		             
+		                			migration.setMigrationLog(migLog);
+		                		}
+		                		migration.addMigrationResults(array);
 	                		}
-	                		migration.addMigrationResults(array);
-                		}
+                		
+    		           }catch (Exception e) {
+    		        		if ( result != null ) {
+    		        			String planId = migration.getPlan().getPlanId();
+    		        			migration.addMigraationfailLog("Error while processing plan Id - " + planId + "--> " + result);
+    		        			//migration.getInstancesFailed()
+    		        	
+    		        		}
+    		        	}
     		        	
                     }
                 }finally {

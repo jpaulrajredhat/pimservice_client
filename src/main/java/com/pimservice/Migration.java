@@ -28,7 +28,7 @@ public class Migration {
 	
 	private List<JsonArray> migrationResults = new ArrayList<JsonArray>();
 	
-	
+	private String execution ;
 	
 	public Migration() {
 		// TODO Auto-generated constructor stub
@@ -148,16 +148,34 @@ public class Migration {
 		
 		this.migrationResults.add(jsonArray);
 	}
+	
+
+	public List<JsonArray> getMigrationResults() {
+		return migrationResults;
+	}
+
+	public void setMigrationResults(List<JsonArray> migrationResults) {
+		this.migrationResults = migrationResults;
+	}
+
+	public String getExecution() {
+		return execution;
+	}
+
+	public void setExecution(String execution) {
+		this.execution = execution;
+	}
 
 	@Override
 	public String toString() {
 		return "Migration [plan=" + plan + ", id=" + id + ", instancesTobeMigrted=" + instancesTobeMigrted
 				+ ", instanceseMigrated=" + instanceseMigrated + ", instancesFailed=" + instancesFailed
 				+ ", migrationLog=" + migrationLog + ", total=" + total + ", processed=" + processed + ", failed="
-				+ failed + "]";
+				+ failed + ", migraationSuccessLog=" + migraationSuccessLog + ", migraationfailLog=" + migraationfailLog
+				+ ", migrationResult=" + migrationResult + ", migrationResults=" + migrationResults + ", execution="
+				+ execution + "]";
 	}
 
-	
 	
 	
 	

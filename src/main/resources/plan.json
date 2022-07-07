@@ -1,5 +1,5 @@
-
- [
+ 
+[
 	
 	{
 	"planId" : "101",
@@ -7,6 +7,14 @@
 	"sourceContainer":"pimdemoprocess_1.0.0",
 	"targetContainer":"pimdemoprocess_1.0.1",
 	"processId":"pimdemoprocess.rhpimprocess"
+	},
+	{
+	"planId" : "102",
+	"execution" :"S",
+	"sourceContainer":"pimdemoprocess_1.0.0",
+	"targetContainer":"pimdemoprocess_1.0.1",
+	"processId":"pimdemoprocess.rhpimprocess",
+	"processInstances":[2008,2004]
 	}
 	
 ]

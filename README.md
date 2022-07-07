@@ -65,10 +65,12 @@ To get the application running with SSL  certification based authentication :
 Navigate to project folder and run the following mvn commands. 
 ```
 $ mvn clean compile assembly:single # Build and assemble all dependency as a one bundle .
+
 $ java -D<pathtokyestore filename> -D<pathtokyestore password> -jar target/pimservice_client-1.0-jar-with-dependencies.jar
 ```
 
 To get the application with basic authentication (local testing) :
 ```
 $ mvn clean compile assembly:single # Build and assemble all dependency as a one bundle .
+
 $ java -DAUTH="basic" -jar target/pimservice_client-1.0-jar-with-dependencies.jar 

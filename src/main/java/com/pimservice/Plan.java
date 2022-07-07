@@ -6,6 +6,7 @@ import java.util.List;
 public class Plan {
 
 	private String id ;
+	private String planId;
 	private String type;
 	private String sourceContainer;
 	private String targetContainer;
@@ -14,7 +15,7 @@ public class Plan {
 	private Long processInstance ;
 	private List<Long> processInstanceTobeMigrated ;
 	private List<Long> processInstances ;
-	
+	//single(S) or multi thread (M)
 	private String execution ;
 	
 	
@@ -168,12 +169,27 @@ public class Plan {
 
 
 
+	public String getPlanId() {
+		return planId;
+	}
+
+
+
+	public void setPlanId(String planId) {
+		this.planId = planId;
+	}
+
+
+
+
+
 	@Override
 	public String toString() {
-		return "Plan [id=" + id + ", type=" + type + ", sourceContainer=" + sourceContainer + ", targetContainer="
-				+ targetContainer + ", processId=" + processId + ", processIds=" + processIds + ", processInstance="
-				+ processInstance + ", processInstanceTobeMigrated=" + processInstanceTobeMigrated
-				+ ", processInstances=" + processInstances + "]";
+		return "Plan [id=" + id + ", planId=" + planId + ", type=" + type + ", sourceContainer=" + sourceContainer
+				+ ", targetContainer=" + targetContainer + ", processId=" + processId + ", processIds=" + processIds
+				+ ", processInstance=" + processInstance + ", processInstanceTobeMigrated="
+				+ processInstanceTobeMigrated + ", processInstances=" + processInstances + ", execution=" + execution
+				+ "]";
 	}
 
 

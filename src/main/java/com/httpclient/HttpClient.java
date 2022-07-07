@@ -137,12 +137,7 @@ public CloseableHttpClient getHttpCertClientAuth(PoolingHttpClientConnectionMana
 		}
 		
 		httpClient = HttpClients.custom().setConnectionManager(cm).setSSLSocketFactory(csf).build();
-		 
-		
-	 
-	
-	
-	 
+
 	return  httpClient;
 
 }
@@ -153,7 +148,7 @@ public  SSLContext createSslContext() throws KeyStoreException, IOException, NoS
 	
 	final String CA_KEYSTORE_TYPE = KeyStore.getDefaultType(); //"JKS";
 	final String CA_KEYSTORE_PATH = System.getProperty("CA_KEYSTORE_PATH", "/cacert.jks") ;
-	final String CA_KEYSTORE_PASS = System.getProperty("CA_KEYSTORE_PASS ", "changeit") ;
+	final String CA_KEYSTORE_PASS = System.getProperty("CA_KEYSTORE_PASS", "changeit") ;
 
 //	final String CLIENT_KEYSTORE_TYPE = System.getProperty("CLIENT_KEYSTORE_TYPE", "PKCS12") ;
 //	final String CLIENT_KEYSTORE_PATH = System.getProperty("CLIENT_KEYSTORE_PATH", "/client.p12") ;
