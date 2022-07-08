@@ -38,7 +38,9 @@ public class CreatePlanService {
 		Gson gson = new Gson();
 		ClassLoader classLoader = gson.getClass().getClassLoader();
 		
-        InputStream inputStream = classLoader.getResourceAsStream("plan.json");
+		String planFile = System.getProperty("PLAN_FILE_NAME", "plan.json");
+		
+        InputStream inputStream = classLoader.getResourceAsStream(planFile);
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 
         
